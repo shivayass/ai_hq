@@ -122,16 +122,12 @@ async def chat(req: ChatRequest, background_tasks: BackgroundTasks):
 
     # Build prompt with memory summary (minimal)
     memory_summary = memory.get('summary') or ''
-    full_prompt = f"Memory:"
-{memory_summary}
+    full_prompt = f"Memory:\n{memory_summary}\n\nUser: {req.prompt}\nAssistant:"
 
-# Build prompt with memory summary (minimal) memory_summary = memory.get('summary') or full_prompt = f"{memory_summary}\n\n{req.prompt}"
-
-Assistant = "ChatGPT Brain is online."
-try:
-   resp = await call_hf_text(full_prompt, model=os.getenv('HF_MODEL', 'gpt2'))
+    try:
+        resp = await call_hf_text(full_prompt, model=os.getenv('HF_MODEL', 'gpt2'))
     except Exception as e:
-        print("Error:", e)
+        print("Error calling HF model:", e)
         raise HTTPException(status_code=500, detail=str(e))
 
     # Save conversation locally
@@ -141,35 +137,37 @@ try:
     # Optionally learn (append short summary) ONLY if user allowed
     if req.allow_learn:
         try:
-            summ = await call_hf_text(
-                'Summarize in one line: ' + req.prompt,
-                model=os.getenv('HF_MODEL', 'gpt2')
-            )
+            summ = await call_hf_text('Summarize in one line: ' + req.prompt,
+                                     model=os.getenv('HF_MODEL', 'gpt2'))
             mem_summary = memory.get('summary', '')
-            memory['summary'] = (mem_summary.strip() + summ.strip())[:2000]
+            memory['summary'] = (mem_summary.strip() + ' ' + summ.strip())[:2000]
             background_tasks.add_task(write_memory, memory)
         except Exception as e:
             print('Learning step failed:', e)
 
-    # Return response
-    return {'response': resp}
     return {'response': resp}
 @app.post('/propose-upgrade')
 async def propose_upgrade(req: ProposeUpgradeRequest):
     """Assistant proposes an upgrade skill (boilerplate code, description). Stored as a proposal for user approval."""
-    # Use HF to draft a small skill module (boilerplate)
     prompt = (
-        prompt_text = f"You are a software engineer. Draft a safe Python module that provides: {req_prompt}"
-        "Include: function signature, brief docstring, example usage. Keep code minimal and safe (no network calls, no shell execution)."
+        f"You are a software engineer. Draft a safe Python module that provides: {req.prompt}\n\n"
+        "Include: function signature, brief docstring, example usage. "
+        "Keep code minimal and safe (no network calls, no shell execution)."
     )
+
     try:
-        code = await call_hf_text(prompt, model=os.getenv('HF_MODEL','gpt2'))
+        code = await call_hf_text(prompt, model=os.getenv('HF_MODEL', 'gpt2'))
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
     proposals = load_proposals()
     pid = hashlib.sha1((req.user_id + req.prompt + code).encode()).hexdigest()[:10]
-    proposals[pid] = {'user_id': req.user_id, 'prompt': req.prompt, 'code': code, 'approved': False}
+    proposals[pid] = {
+        'user_id': req.user_id,
+        'prompt': req.prompt,
+        'code': code,
+        'approved': False
+    }
     save_proposals(proposals)
     return {'proposal_id': pid, 'summary': req.prompt}
 
