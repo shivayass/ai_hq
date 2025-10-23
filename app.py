@@ -218,4 +218,8 @@ async def show_memory():
     # return a limited safe view of memory (do not leak secrets)
     mem = await read_memory()
     return {'summary': mem.get('summary',''), 'conversations_count': len(mem.get('conversations',[]))}
-
+if __name__ == "__main__":
+    import uvicorn
+    import os
+    port = int(os.environ.get("PORT", 10000))
+    uvicorn.run("app:app", host="0.0.0.0", port=port)
