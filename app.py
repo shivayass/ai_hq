@@ -224,7 +224,7 @@ async def root():
     return {"message": "AI HQ Brain is live. Use POST /chat to talk."}
 
 if __name__ == "__main__":
-    import uvicorn, os
+    import uvicorn
+    import os
     port = int(os.environ.get("PORT", 10000))
-    # run the app object directly (ensures the route we just defined is used)
-    uvicorn.run(app, host="0.0.0.0", port=port)
+    uvicorn.run("app:app", host="0.0.0.0", port=port)
