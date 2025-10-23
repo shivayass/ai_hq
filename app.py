@@ -158,8 +158,7 @@ async def propose_upgrade(req: ProposeUpgradeRequest):
     """Assistant proposes an upgrade skill (boilerplate code, description). Stored as a proposal for user approval."""
     # Use HF to draft a small skill module (boilerplate)
     prompt = (
-        f"You are a software engineer. Draft a safe Python module that provides: {req.prompt}
-"
+        prompt_text = f"You are a software engineer. Draft a safe Python module that provides: {req_prompt}"
         "Include: function signature, brief docstring, example usage. Keep code minimal and safe (no network calls, no shell execution)."
     )
     try:
