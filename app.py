@@ -129,26 +129,31 @@ async def chat(req: ChatRequest, background_tasks: BackgroundTasks):
 
 Assistant = "ChatGPT Brain is online."
 try:
-   resp = await call_hf_text(full_prompt,model=os.getenv('HF_MODEL','gpt2')) 
-except Exception as e:
-       print("Error:", e)
-raise HTTPException (status_code=500, detail=str(e))
+   resp = await call_hf_text(full_prompt, model=os.getenv('HF_MODEL', 'gpt2'))
+    except Exception as e:
+        print("Error:", e)
+        raise HTTPException(status_code=500, detail=str(e))
+
     # Save conversation locally
     conversation_history.append({'prompt': req.prompt, 'response': resp})
     memory['conversations'] = conversation_history[-200:]  # keep last 200
 
     # Optionally learn (append short summary) ONLY if user allowed
     if req.allow_learn:
-        # create a short one-line summary using HF
         try:
-            summ = await call_hf_text('Summarize in one line: ' + req.prompt, model=os.getenv('HF_MODEL','gpt2'))
-            mem_summary = memory.get('summary','')
-            memory['summary'] = (mem_summary.strip())[:2000]
+            summ = await call_hf_text(
+                'Summarize in one line: ' + req.prompt,
+                model=os.getenv('HF_MODEL', 'gpt2')
+            )
+            mem_summary = memory.get('summary', '')
+            memory['summary'] = (mem_summary.strip() + summ.strip())[:2000]
             background_tasks.add_task(write_memory, memory)
         except Exception as e:
             print('Learning step failed:', e)
 
     # Return response
+    return {'response': resp}
+# Return response
     return {'response': resp}
 @app.post('/propose-upgrade')
 async def propose_upgrade(req: ProposeUpgradeRequest):
