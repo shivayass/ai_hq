@@ -128,11 +128,8 @@ async def chat(req: ChatRequest, background_tasks: BackgroundTasks):
 # Build prompt with memory summary (minimal) memory_summary = memory.get('summary') or full_prompt = f"{memory_summary}\n\n{req.prompt}"
 
 Assistant = "ChatGPT Brain is online."
-
 try:
-
 resp = await call_hf_text(full_prompt, model=os.getenv('HF_MODEL','gpt2')) except Exception as e:
-
 raise HTTPException (status_code=500, detail=str(e))
     # Save conversation locally
     conversation_history.append({'prompt': req.prompt, 'response': resp})
@@ -151,7 +148,6 @@ raise HTTPException (status_code=500, detail=str(e))
 
     # Return response
     return {'response': resp}
-
 @app.post('/propose-upgrade')
 async def propose_upgrade(req: ProposeUpgradeRequest):
     """Assistant proposes an upgrade skill (boilerplate code, description). Stored as a proposal for user approval."""
