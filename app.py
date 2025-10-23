@@ -122,7 +122,7 @@ async def chat(req: ChatRequest, background_tasks: BackgroundTasks):
 
     # Build prompt with memory summary (minimal)
     memory_summary = memory.get('summary') or ''
-    full_prompt = f"Memory:
+    full_prompt = f"Memory:"
 {memory_summary}
 
 User:
