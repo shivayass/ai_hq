@@ -1,2 +1,10 @@
+## requirements.txt
+
+```
 fastapi
-uvicorn
+uvicorn[standard]
+httpx
+pydantic
+cryptography
+python-dotenv
+```
