@@ -129,7 +129,9 @@ async def chat(req: ChatRequest, background_tasks: BackgroundTasks):
 
 Assistant = "ChatGPT Brain is online."
 try:
-resp = await call_hf_text(full_prompt, model=os.getenv('HF_MODEL','gpt2')) except Exception as e:
+   resp = await call_hf_text(full_prompt,model=os.getenv('HF_MODEL','gpt2')) 
+except Exception as e:
+       print("Error:", e)
 raise HTTPException (status_code=500, detail=str(e))
     # Save conversation locally
     conversation_history.append({'prompt': req.prompt, 'response': resp})
