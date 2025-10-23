@@ -153,7 +153,6 @@ try:
 
     # Return response
     return {'response': resp}
-# Return response
     return {'response': resp}
 @app.post('/propose-upgrade')
 async def propose_upgrade(req: ProposeUpgradeRequest):
