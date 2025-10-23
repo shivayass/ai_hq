@@ -1,10 +1,20 @@
-## Dockerfile
-
-```dockerfile
+# Use the official Python 3.11 slim image
 FROM python:3.11-slim
+
+# Set working directory
 WORKDIR /app
-COPY . /app
+
+# Copy requirements (if you have any)
+COPY requirements.txt ./
+
+# Install dependencies
 RUN pip install --no-cache-dir -r requirements.txt
-ENV PYTHONUNBUFFERED=1
-CMD ["sh","-c","uvicorn main:app --host 0.0.0.0 --port $PORT"]
-```
+
+# Copy all app files
+COPY . .
+
+# Expose the app port
+EXPOSE 8080
+
+# Start the app
+CMD ["python", "app.py"]
