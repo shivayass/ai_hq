@@ -222,7 +222,19 @@ async def show_memory():
 @app.get("/")
 async def root():
     return {"message": "AI HQ Brain is live. Use POST /chat to talk."}
+from fastapi import FastAPI
+import os
 
+app = FastAPI()
+
+@app.get("/debug-env")
+def debug_env():
+    hf_token = os.getenv("HF_TOKEN")
+    hf_model = os.getenv("HF_MODEL")
+    return {
+        "HF_TOKEN_FOUND": bool(hf_token),
+        "HF_MODEL": hf_model if hf_model else "Not found"
+    }
 if __name__ == "__main__":
     import uvicorn
     import os
