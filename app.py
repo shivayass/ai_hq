@@ -218,14 +218,13 @@ async def show_memory():
     # return a limited safe view of memory (do not leak secrets)
     mem = await read_memory()
     return {'summary': mem.get('summary',''), 'conversations_count': len(mem.get('conversations',[]))}
-if __name__ == "__main__":
-    import uvicorn
-    import os
-    port = int(os.environ.get("PORT", 10000))
-    uvicorn.run("app:app", host="0.0.0.0", port=port)
-   from fastapi import FastAPI
-app = FastAPI()
-
+# register a friendly root endpoint (define it before running the server)
 @app.get("/")
 async def root():
-    return {"message": "ChatGPT Brain is live and ready!"}
+    return {"message": "AI HQ Brain is live. Use POST /chat to talk."}
+
+if __name__ == "__main__":
+    import uvicorn, os
+    port = int(os.environ.get("PORT", 10000))
+    # run the app object directly (ensures the route we just defined is used)
+    uvicorn.run(app, host="0.0.0.0", port=port)
