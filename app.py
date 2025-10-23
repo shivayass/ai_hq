@@ -125,16 +125,15 @@ async def chat(req: ChatRequest, background_tasks: BackgroundTasks):
     full_prompt = f"Memory:"
 {memory_summary}
 
-#User:
-{req.prompt}
+# Build prompt with memory summary (minimal) memory_summary = memory.get('summary') or full_prompt = f"{memory_summary}\n\n{req.prompt}"
 
 Assistant = "ChatGPT Brain is online."
 
-    try:
-        resp = await call_hf_text(full_prompt, model=os.getenv('HF_MODEL','gpt2'))
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+try:
 
+resp = await call_hf_text(full_prompt, model=os.getenv('HF_MODEL','gpt2')) except Exception as e:
+
+raise HTTPException (status_code=500, detail=str(e))
     # Save conversation locally
     conversation_history.append({'prompt': req.prompt, 'response': resp})
     memory['conversations'] = conversation_history[-200:]  # keep last 200
