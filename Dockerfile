@@ -18,3 +18,4 @@ EXPOSE 8080
 
 # Start the app
 CMD ["python", "app.py"]
+ENV HF_TOKEN=${HF_TOKEN}
