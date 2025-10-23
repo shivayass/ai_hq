@@ -223,6 +223,9 @@ if __name__ == "__main__":
     import os
     port = int(os.environ.get("PORT", 10000))
     uvicorn.run("app:app", host="0.0.0.0", port=port)
-    @app.get("/")
-    async def root():
-      return {"message": "AI HQ Brain is live. Use POST /chat to talk."}
+   from fastapi import FastAPI
+app = FastAPI()
+
+@app.get("/")
+async def root():
+    return {"message": "ChatGPT Brain is live and ready!"}
