@@ -1,12 +1,10 @@
-FROM python:3.10-slim
+## Dockerfile
 
+```dockerfile
+FROM python:3.11-slim
 WORKDIR /app
-COPY . .
-
+COPY . /app
 RUN pip install --no-cache-dir -r requirements.txt
-
-# Render sets PORT as an environment variable
-ENV PORT=10000
-EXPOSE 10000
-
-CMD ["sh", "-c", "uvicorn main:app --host 0.0.0.0 --port $PORT"]
+ENV PYTHONUNBUFFERED=1
+CMD ["sh","-c","uvicorn main:app --host 0.0.0.0 --port $PORT"]
+```
