@@ -1,22 +1,15 @@
-# Use the official Python 3.11 slim image
+# Use Python base image
 FROM python:3.11-slim
 
-# Set working directory
 WORKDIR /app
-
-# Copy requirements (if you have any)
-COPY requirements.txt ./
-
-# Install dependencies
+COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
-
-# Copy all app files
 COPY . .
 
-# Expose the app port
-EXPOSE 8080
+# Make sure Render's environment vars are available
+ENV HF_TOKEN=${HF_TOKEN}
+ENV HF_MODEL=${HF_MODEL}
+ENV HUGGINGFACE_API_TOKEN=${HF_TOKEN}
 
-ENV HF_TOKEN=$HF_TOKEN
-ENV HUGGINGFACE_API_TOKEN=$HF_TOKEN
-
-CMD ["python", "app.py"]
+# Run your app
+CMD ["uvicorn", "app:app", "--host", "0.0.0.0", "--port", "10000"]
