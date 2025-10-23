@@ -16,8 +16,7 @@ COPY . .
 # Expose the app port
 EXPOSE 8080
 
-# ✅ Keep ENV line BEFORE CMD
-ENV HF_TOKEN=${HF_TOKEN}
+ENV HF_TOKEN=$HF_TOKEN
+ENV HUGGINGFACE_API_TOKEN=$HF_TOKEN
 
-# Start the app
 CMD ["python", "app.py"]
