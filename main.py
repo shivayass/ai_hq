@@ -1,6 +1,3 @@
-## main.py
-
-```python
 # main.py
 # ChatGPT Brain - Starter FastAPI backend
 # - /chat: interact with the assistant
@@ -226,4 +223,3 @@ async def show_memory():
     mem = await read_memory()
     return {'summary': mem.get('summary',''), 'conversations_count': len(mem.get('conversations',[]))}
 
-```
