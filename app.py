@@ -144,8 +144,7 @@ Assistant = "ChatGPT Brain is online."
         # create a short one-line summary using HF
         try:
             summ = await call_hf_text('Summarize in one line: ' + req.prompt, model=os.getenv('HF_MODEL','gpt2'))
-            mem_summary = memory.get('summary','') + '
-' + summ
+            mem_summary = memory.get('summary','')
             memory['summary'] = (mem_summary.strip())[:2000]
             background_tasks.add_task(write_memory, memory)
         except Exception as e:
