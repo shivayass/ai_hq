@@ -19,29 +19,36 @@ def home():
 @app.post("/chat")
 async def chat(request: Request):
     data = await request.json()
-    prompt = data.get("prompt", "Hello, who are you?")
-    payload = {"inputs": prompt}
+    prompt = data.get("prompt", "")
 
-    # Step 1: Try the main model
-    response = requests.post(API_URL, headers=HEADERS, json=payload)
+    # Model + token
+    hf_model = os.getenv("HF_MODEL", "google/flan-t5-base")
+    hf_token = os.getenv("HF_TOKEN")
 
-    # Step 2: If 404 or error, auto fallback
-    if response.status_code != 200:
-        print(f"[WARN] Main model failed ({response.status_code}), switching to fallback.")
-        fallback_url = f"https://api-inference.huggingface.co/models/{FALLBACK_MODEL}"
-        response = requests.post(fallback_url, headers=HEADERS, json=payload)
-
-    # Step 3: Return the model’s reply
     try:
-        result = response.json()
-        if isinstance(result, list) and len(result) > 0 and "generated_text" in result[0]:
-            return {"reply": result[0]["generated_text"]}
-        elif "error" in result:
-            return {"error": result["error"]}
+        response = requests.post(
+            f"https://api-inference.huggingface.co/models/{hf_model}",
+            headers={"Authorization": f"Bearer {hf_token}"},
+            json={"inputs": prompt},
+        )
+
+        # Debug output
+        print("DEBUG Hugging Face response:", response.text)
+
+        if response.status_code == 200:
+            result = response.json()
+            if isinstance(result, list) and "generated_text" in result[0]:
+                return {"reply": result[0]["generated_text"]}
+            else:
+                return {"raw_result": result}
         else:
-            return result
+            return {
+                "error": f"Hugging Face API returned {response.status_code}",
+                "details": response.text,
+            }
+
     except Exception as e:
-        return JSONResponse(content={"error": str(e)}, status_code=500)
+        return {"error": f"Internal error: {str(e)}"}
 
 @app.get("/debug-env")
 def debug_env():
