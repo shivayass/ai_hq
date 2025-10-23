@@ -128,7 +128,7 @@ async def chat(req: ChatRequest, background_tasks: BackgroundTasks):
 User:
 {req.prompt}
 
-Assistant:" 
+Assistant = "ChatGPT Brain is online."
 
     try:
         resp = await call_hf_text(full_prompt, model=os.getenv('HF_MODEL','gpt2'))
