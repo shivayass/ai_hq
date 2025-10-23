@@ -187,8 +187,7 @@ async def approve_upgrade(req: ApproveUpgradeRequest):
     os.makedirs('staging_skills', exist_ok=True)
     fname = f'staging_skills/skill_{req.proposal_id}.py'
     with open(fname, 'w', encoding='utf-8') as f:
-        f.write('# Auto-generated skill - review before enabling
-')
+        f.write("# Auto-generated skill - review before enabling")
         f.write(p['code'])
 
     p['approved'] = True
