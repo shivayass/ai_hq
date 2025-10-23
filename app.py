@@ -125,7 +125,7 @@ async def chat(req: ChatRequest, background_tasks: BackgroundTasks):
     full_prompt = f"Memory:"
 {memory_summary}
 
-User:
+#User:
 {req.prompt}
 
 Assistant = "ChatGPT Brain is online."
